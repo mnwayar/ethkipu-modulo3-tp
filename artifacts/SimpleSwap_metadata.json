@@ -414,18 +414,18 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "tokenIn",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "tokenOut",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
 						"name": "amountIn",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "reserveIn",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "reserveOut",
 						"type": "uint256"
 					}
 				],
@@ -437,7 +437,7 @@
 						"type": "uint256"
 					}
 				],
-				"stateMutability": "pure",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -831,14 +831,14 @@
 				"decimals()": {
 					"details": "Returns the number of decimals used to get its user representation. For example, if `decimals` equals `2`, a balance of `505` tokens should be displayed to a user as `5.05` (`505 / 10 ** 2`). Tokens usually opt for a value of 18, imitating the relationship between Ether and Wei. This is the default value returned by this function, unless it's overridden. NOTE: This information is only used for _display_ purposes: it in no way affects any of the arithmetic of the contract, including {IERC20-balanceOf} and {IERC20-transfer}."
 				},
-				"getAmountOut(uint256,uint256,uint256)": {
+				"getAmountOut(address,address,uint256)": {
 					"params": {
 						"amountIn": "amount of input token",
-						"reserveIn": "reserve of input token",
-						"reserveOut": "reserve of output token"
+						"tokenIn": "address input token",
+						"tokenOut": "address output token"
 					},
 					"returns": {
-						"amountOut": "token amount"
+						"amountOut": "token amount to swap"
 					}
 				},
 				"getPrice(address,address)": {
@@ -932,7 +932,7 @@
 				"constructor": {
 					"notice": "Constructor that initialize the contract"
 				},
-				"getAmountOut(uint256,uint256,uint256)": {
+				"getAmountOut(address,address,uint256)": {
 					"notice": "returns output amount for an input and reserve"
 				},
 				"getPrice(address,address)": {
@@ -951,7 +951,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"SimpleSwap.sol": "SimpleSwap"
+			"SimpleSwap2.sol": "SimpleSwap"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -1069,12 +1069,12 @@
 				"dweb:/ipfs/QmPFKL2r9CBsMwmUqqdcFPfHZB2qcs9g1HDrPxzWSxomvy"
 			]
 		},
-		"SimpleSwap.sol": {
-			"keccak256": "0xd39ab447bca813ee6f94baa98c323eb1bb4e3f5e40deb789a9fb7c0f5c8bfafc",
+		"SimpleSwap2.sol": {
+			"keccak256": "0x9bec17e2107c5c737dd3b42b828ec4fb25a2b9c5e9bbaf4d8876f42c3640b15f",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fe109b40cd2308f6ad450b2bef62d2a064b87b5751cc23bf51e391ac690fa5bb",
-				"dweb:/ipfs/QmUPJUcnvGidAp9Wr4tjg3ZJfr3SAWBRYhjTnptHqgWR9Z"
+				"bzz-raw://141c3b5e88d3ef50a2003c6cfa34e19c3ac588d57291aa8b14c8f2d43d8a84f6",
+				"dweb:/ipfs/QmUxRqgc4hWD1QxUcUEUKhwtorEjLLUPsWQdtajw72mdMm"
 			]
 		}
 	},
