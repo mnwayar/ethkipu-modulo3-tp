@@ -7,26 +7,69 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
+/// @title SimpleSwap
+/// @author Wayar Matias Nahuel
+/// @notice This contract allows the addition and remove of liquidity, the swap between TokenA and TokenB and returns the price. 
+/// @notice Also, implements IERC20 and manage the LQP token.
 contract SimpleSwap is ERC20 {
     using SafeERC20 for IERC20;
 
-    address public token_A;
-    address public token_B;
+    // Variables
 
+    /// @dev address of token A, setted in constructor
+    address public token_A;
+    /// @dev address of token B, setted in constructor
+    address public token_B;
+    /// @dev reserves of token A
     uint public reserve_A;
+    /// @dev reserves of token B
     uint public reserve_B;
 
+    // Events
+
+    /// @notice Emitted when liquidity is added
+    /// @param provider address of who adds liquidity
+    /// @param amountA amount token A
+    /// @param amountB amount token B
+    /// @param liquidity liquidity generated
     event LiquidityAdded(address indexed provider, uint amountA, uint amountB, uint liquidity);
+
+    /// @notice Emitted when liquidity is removed
+    /// @param provider address of who removes liquidity
+    /// @param amountA amount token A
+    /// @param amountB amount token B
+    /// @param liquidity liquidity burned
     event LiquidityRemoved(address indexed provider, uint amountA, uint amountB, uint liquidity);
+
+    /// @notice Emitted when liquidity is added
+    /// @param user address of who realize the swap
+    /// @param tokenIn token swapped
+    /// @param tokenOut token swapped to
+    /// @param amountIn amount ingressed
+    /// @param amountOut amount obtained
     event TokensSwapped(address indexed user, address tokenIn, address tokenOut, uint amountIn, uint amountOut);
 
-
+    /// @notice Constructor that initialize the contract
+    /// @dev sets the token A and token B addresses, and token and symbol for LP
     constructor(address _tokenA, address _tokenB) ERC20("LIQUIDITY_POOL", "LQP") {
         require(_tokenA != _tokenB, "tokens equals!");
         token_A = _tokenA;
         token_B = _tokenB;
     }
 
+    /// @notice Adds liquidity and mints LQP tokens
+    /// @dev emits the event {LiquidityAdded}
+    /// @param tokenA address of token A
+    /// @param tokenB address of token B
+    /// @param amountADesired desired amount of token A
+    /// @param amountBDesired desired amount of token B
+    /// @param amountAMin minimum acceptable amount of token A
+    /// @param amountBMin minimum acceptable amount of token B
+    /// @param to address receiving liquidity tokens
+    /// @param deadline timestamp to check if transaction is valid
+    /// @return amountA amount of token A deposited
+    /// @return amountB amount of token B deposited
+    /// @return liquidity amount of LQP tokens minted
     function addLiquidity(
         address tokenA,
         address tokenB,
@@ -83,6 +126,17 @@ contract SimpleSwap is ERC20 {
         return (amountA, amountB, liquidity);
     }
 
+    /// @notice Removes liquidity and burns LQP tokens
+    /// @dev emits the event {LiquidityRemoved}
+    /// @param tokenA address of token A
+    /// @param tokenB address of token B
+    /// @param liquidity amount of LQP tokens to be burn
+    /// @param amountAMin minimum acceptable amount of token A
+    /// @param amountBMin minimum acceptable amount of token B
+    /// @param to address receiving the tokens
+    /// @param deadline timestamp to check if transaction is valid
+    /// @return amountA amount of token A returned
+    /// @return amountB amount of token B returned
     function removeLiquidity(
         address tokenA,
         address tokenB,
@@ -123,6 +177,14 @@ contract SimpleSwap is ERC20 {
         return(amountA, amountB);    
     }
 
+    /// @notice Swaps an exact amount of input tokens for output tokens
+    /// @dev emits the event {TokensSwapped}
+    /// @param amountIn amount of input token to send
+    /// @param amountOutMin minimum acceptable amount of output token
+    /// @param path array with [tokenIn, tokenOut] addresses
+    /// @param to address to receive the output token
+    /// @param deadline timestamp to check if transaction is valid
+    /// @return amounts array of token amounts [amountIn, amountOut]
     function swapExactTokensForTokens(
         uint amountIn,
         uint amountOutMin,
@@ -160,6 +222,10 @@ contract SimpleSwap is ERC20 {
         return amounts;
     }
 
+    /// @notice Returns the price of tokenA in terms of tokenB
+    /// @param tokenA address
+    /// @param tokenB address
+    /// @return price price with 18 decimals (tokenB per tokenA)
     function getPrice(address tokenA, address tokenB) external view returns (uint price) {
         require((tokenA == token_A && tokenB == token_B) || (tokenA == token_B && tokenB == token_A), "Invalid tokens");
         require(reserve_A > 0 && reserve_B > 0, "No liquidity");
@@ -175,11 +241,18 @@ contract SimpleSwap is ERC20 {
         return price;        
     }
 
+    /// @notice returns output amount for an input and reserve
+    /// @param amountIn amount of input token
+    /// @param reserveIn reserve of input token
+    /// @param reserveOut reserve of output token
+    /// @return amountOut token amount
     function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) public pure returns (uint amountOut) {
         require(amountIn > 0 && reserveIn > 0 && reserveOut > 0, "Invalid reserves or amount");
 
 		uint numerator = amountIn * reserveOut;
 		uint denominator = reserveIn + amountIn;
 		amountOut = numerator / denominator;
+
+        return amountOut;
     }
 }

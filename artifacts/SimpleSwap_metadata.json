@@ -703,6 +703,7 @@
 			}
 		],
 		"devdoc": {
+			"author": "Wayar Matias Nahuel",
 			"errors": {
 				"ERC20InsufficientAllowance(address,uint256,uint256)": [
 					{
@@ -766,12 +767,55 @@
 				"Approval(address,address,uint256)": {
 					"details": "Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance."
 				},
+				"LiquidityAdded(address,uint256,uint256,uint256)": {
+					"params": {
+						"amountA": "amount token A",
+						"amountB": "amount token B",
+						"liquidity": "liquidity generated",
+						"provider": "address of who adds liquidity"
+					}
+				},
+				"LiquidityRemoved(address,uint256,uint256,uint256)": {
+					"params": {
+						"amountA": "amount token A",
+						"amountB": "amount token B",
+						"liquidity": "liquidity burned",
+						"provider": "address of who removes liquidity"
+					}
+				},
+				"TokensSwapped(address,address,address,uint256,uint256)": {
+					"params": {
+						"amountIn": "amount ingressed",
+						"amountOut": "amount obtained",
+						"tokenIn": "token swapped",
+						"tokenOut": "token swapped to",
+						"user": "address of who realize the swap"
+					}
+				},
 				"Transfer(address,address,uint256)": {
 					"details": "Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero."
 				}
 			},
 			"kind": "dev",
 			"methods": {
+				"addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)": {
+					"details": "emits the event {LiquidityAdded}",
+					"params": {
+						"amountADesired": "desired amount of token A",
+						"amountAMin": "minimum acceptable amount of token A",
+						"amountBDesired": "desired amount of token B",
+						"amountBMin": "minimum acceptable amount of token B",
+						"deadline": "timestamp to check if transaction is valid",
+						"to": "address receiving liquidity tokens",
+						"tokenA": "address of token A",
+						"tokenB": "address of token B"
+					},
+					"returns": {
+						"amountA": "amount of token A deposited",
+						"amountB": "amount of token B deposited",
+						"liquidity": "amount of LQP tokens minted"
+					}
+				},
 				"allowance(address,address)": {
 					"details": "See {IERC20-allowance}."
 				},
@@ -781,11 +825,62 @@
 				"balanceOf(address)": {
 					"details": "See {IERC20-balanceOf}."
 				},
+				"constructor": {
+					"details": "sets the token A and token B addresses, and token and symbol for LP"
+				},
 				"decimals()": {
 					"details": "Returns the number of decimals used to get its user representation. For example, if `decimals` equals `2`, a balance of `505` tokens should be displayed to a user as `5.05` (`505 / 10 ** 2`). Tokens usually opt for a value of 18, imitating the relationship between Ether and Wei. This is the default value returned by this function, unless it's overridden. NOTE: This information is only used for _display_ purposes: it in no way affects any of the arithmetic of the contract, including {IERC20-balanceOf} and {IERC20-transfer}."
 				},
+				"getAmountOut(uint256,uint256,uint256)": {
+					"params": {
+						"amountIn": "amount of input token",
+						"reserveIn": "reserve of input token",
+						"reserveOut": "reserve of output token"
+					},
+					"returns": {
+						"amountOut": "token amount"
+					}
+				},
+				"getPrice(address,address)": {
+					"params": {
+						"tokenA": "address",
+						"tokenB": "address"
+					},
+					"returns": {
+						"price": "price with 18 decimals (tokenB per tokenA)"
+					}
+				},
 				"name()": {
 					"details": "Returns the name of the token."
+				},
+				"removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)": {
+					"details": "emits the event {LiquidityRemoved}",
+					"params": {
+						"amountAMin": "minimum acceptable amount of token A",
+						"amountBMin": "minimum acceptable amount of token B",
+						"deadline": "timestamp to check if transaction is valid",
+						"liquidity": "amount of LQP tokens to be burn",
+						"to": "address receiving the tokens",
+						"tokenA": "address of token A",
+						"tokenB": "address of token B"
+					},
+					"returns": {
+						"amountA": "amount of token A returned",
+						"amountB": "amount of token B returned"
+					}
+				},
+				"swapExactTokensForTokens(uint256,uint256,address[],address,uint256)": {
+					"details": "emits the event {TokensSwapped}",
+					"params": {
+						"amountIn": "amount of input token to send",
+						"amountOutMin": "minimum acceptable amount of output token",
+						"deadline": "timestamp to check if transaction is valid",
+						"path": "array with [tokenIn, tokenOut] addresses",
+						"to": "address to receive the output token"
+					},
+					"returns": {
+						"amounts": "array of token amounts [amountIn, amountOut]"
+					}
 				},
 				"symbol()": {
 					"details": "Returns the symbol of the token, usually a shorter version of the name."
@@ -800,11 +895,57 @@
 					"details": "See {IERC20-transferFrom}. Skips emitting an {Approval} event indicating an allowance update. This is not required by the ERC. See {xref-ERC20-_approve-address-address-uint256-bool-}[_approve]. NOTE: Does not update the allowance if the current allowance is the maximum `uint256`. Requirements: - `from` and `to` cannot be the zero address. - `from` must have a balance of at least `value`. - the caller must have allowance for ``from``'s tokens of at least `value`."
 				}
 			},
+			"stateVariables": {
+				"reserve_A": {
+					"details": "reserves of token A"
+				},
+				"reserve_B": {
+					"details": "reserves of token B"
+				},
+				"token_A": {
+					"details": "address of token A, setted in constructor"
+				},
+				"token_B": {
+					"details": "address of token B, setted in constructor"
+				}
+			},
+			"title": "SimpleSwap",
 			"version": 1
 		},
 		"userdoc": {
+			"events": {
+				"LiquidityAdded(address,uint256,uint256,uint256)": {
+					"notice": "Emitted when liquidity is added"
+				},
+				"LiquidityRemoved(address,uint256,uint256,uint256)": {
+					"notice": "Emitted when liquidity is removed"
+				},
+				"TokensSwapped(address,address,address,uint256,uint256)": {
+					"notice": "Emitted when liquidity is added"
+				}
+			},
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)": {
+					"notice": "Adds liquidity and mints LQP tokens"
+				},
+				"constructor": {
+					"notice": "Constructor that initialize the contract"
+				},
+				"getAmountOut(uint256,uint256,uint256)": {
+					"notice": "returns output amount for an input and reserve"
+				},
+				"getPrice(address,address)": {
+					"notice": "Returns the price of tokenA in terms of tokenB"
+				},
+				"removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)": {
+					"notice": "Removes liquidity and burns LQP tokens"
+				},
+				"swapExactTokensForTokens(uint256,uint256,address[],address,uint256)": {
+					"notice": "Swaps an exact amount of input tokens for output tokens"
+				}
+			},
+			"notice": "This contract allows the addition and remove of liquidity, the swap between TokenA and TokenB and returns the price. Also, implements IERC20 and manage the LQP token.",
 			"version": 1
 		}
 	},
@@ -929,11 +1070,11 @@
 			]
 		},
 		"SimpleSwap.sol": {
-			"keccak256": "0xbd813094a2b2f44c9bce1129a197679b5e14d2fc5837f92ab4df961ff3b03580",
+			"keccak256": "0xd39ab447bca813ee6f94baa98c323eb1bb4e3f5e40deb789a9fb7c0f5c8bfafc",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://eb1ea8cb0f37ffade4e31ca093f39abb1e995ca211bdf9f21612b72392c74b26",
-				"dweb:/ipfs/QmbNv3PPm9abcVZuHtR6bkhKHPg7a56GHz7prLSLxB3Gvx"
+				"bzz-raw://fe109b40cd2308f6ad450b2bef62d2a064b87b5751cc23bf51e391ac690fa5bb",
+				"dweb:/ipfs/QmUPJUcnvGidAp9Wr4tjg3ZJfr3SAWBRYhjTnptHqgWR9Z"
 			]
 		}
 	},
