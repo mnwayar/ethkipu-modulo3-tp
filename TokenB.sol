@@ -12,7 +12,7 @@ contract TokenB is ERC20, ERC20Pausable, Ownable {
         ERC20("TOKEN_B", "TKB")
         Ownable(initialOwner)
     {
-        _mint(recipient, 10000 * 10 ** decimals());
+        _mint(recipient, 20000 * 10 ** decimals());
     }
 
     function pause() public onlyOwner {
