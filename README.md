@@ -166,6 +166,18 @@ event TokensSwapped(address indexed user, address tokenIn, address tokenOut, uin
 
 ---
 
+## Deployment
+
+This contract was deployed to the Sepolia testnet using Remix.
+
+- **Network**: Sepolia
+- **Contract address**: `0xF3D89dbc8abBB33020B916026BE77875FF9A7028`
+- **Token A address**: `0x2d2B2C2af6f4F87E722E064dcD9fDd3F94ce7597`
+- **Token B address**: `0xe7318ea312EE8b8faAD947136f4C1b0d75484667`
+- **LP Token Symbol**: LQP
+
+---
+
 ## 🧪 Example Usage
 
 ```solidity
